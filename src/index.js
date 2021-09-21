@@ -1,58 +1,59 @@
 import { fetchCountry } from './js/fetchCountries'
-// console.log(fetchCountry)
 import debounce from 'lodash.debounce'
-import '@pnotify/core/dist/BrightTheme.css'
+import { error } from '@pnotify/core'
 
-import { alert, notice, info, success, error } from '@pnotify/core'
-// or
-
-// Manually set the type.
-const myAlert = alert({
-  text: "I'm an alert.",
-  type: 'info',
-})
-
-// Automatically set the type.
-const myNotice = notice({
-  text: "I'm a notice.",
-})
-
-const myInfo = info({
-  text: "I'm an info message.",
-})
-
-const mySuccess = success({
-  text: "I'm a success message.",
-})
-
-const myError = error({
-  text: "I'm an error message.",
-})
-
-// import countriesTmp from './templates/countries.hbs'
-// import countriesListTmp from './templates/countries-list.hbs'
-
+const item = document.querySelector('.country')
 const listRef = document.querySelector('#list')
-// console.log(listRef)
 const inputRef = document.querySelector('.input-text')
 
 inputRef.addEventListener('input', debounce(getCountries, 500))
 function getCountries(e) {
+  if (e.target.value.length === 0) {
+    listRef.innerHTML = ''
+    return
+  }
+
   let getCountries = e.target.value.toLowerCase().trim()
 
   fetchCountry(getCountries).then(data => {
+    if (data.status == 404) error({ text: 'Not found.' })
     listRef.innerHTML = ''
+    item.innerHTML = ''
     console.log(data)
     const countries = data
       .splice(-10)
-      .map(elem => {
-        return `
-    <li>
-       ${elem.name}
-       </li>
-     `
+      .map((elem, i, arr) => {
+        if (arr.length == 1) {
+          return `
+          <h2 class="country-title">${elem.name}</h2>
+          <ul class="country-list">
+            <li class="country-item">
+              <span class="title-name">Capital: </span>
+              <span class="title-value">${elem.capital}</span>
+            </li>
+            <li class="country-item">
+              <span class="title-name">Population:</span>
+              <span class="title-value">${elem.population}</span>
+            </li>
+            <li class="country-item ">
+              <span class="title-name">Language :</span>
+              <ul class="language-list">
+                  <li class="language-item">${elem.name}</li>
+              </ul>
+            </li>
+          </ul>
+          <img class="flag-img" src="${elem.flag}" alt="flag" width="500" height="300">
+        `
+        } else {
+          return `<li>${elem.name}</li>`
+        }
       })
       .join('')
-    listRef.insertAdjacentHTML('afterbegin', countries)
+
+    if (data.length == 0) {
+      item.insertAdjacentHTML('afterbegin', countries)
+    } else listRef.insertAdjacentHTML('afterbegin', countries)
+
+    if (data.length > 10) error({ text: 'Too many matches found.Please enter a more specific query!' })
   })
 }
