@@ -19,7 +19,6 @@ function getCountries(e) {
     if (data.status == 404) error({ text: 'Not found.' })
     listRef.innerHTML = ''
     item.innerHTML = ''
-    console.log(data)
     const countries = data
       .splice(-10)
       .map((elem, i, arr) => {
