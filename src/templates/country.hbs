@@ -7,11 +7,14 @@
 
          <p class="country-item"><b>Population:</b> {{population}}</p>
      
-         <ul class="country-list">Languages:
+             <p class="country-item"><b>Languages:</b> 
+         {{!-- <ul class="country-list"> --}}
              {{#each languages}}
-              <li class='country-item'> {{this.name}}</li>
+              {{!-- <li class='country-item'>  --}}
+                 {{this.name}}{{#if @last}}.{{else}}, {{/if}}
+               {{!-- </li> --}}
              {{/each}}
-         </ul>
+         {{!-- </ul> --}}
       </div>
       <div class="card-img">
          <img 
