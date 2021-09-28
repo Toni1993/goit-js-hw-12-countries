@@ -12,7 +12,7 @@ const inputRef = document.querySelector('.input-text')
 inputRef.addEventListener('input', debounce(getCountries, 500))
 function getCountries(e) {
   let getCountries = e.target.value.toLowerCase().trim()
-
+  if (!getCountries.length) return
   fetchCountry(getCountries)
     .then(data => {
       listRef.innerHTML = ''
